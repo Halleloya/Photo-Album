@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+
+<header>
+  <h1>CC assignment 3</h1>
+</header>
+<body>
+    <td><label><h2>Upload photo here:</h2></label></td>
+    <input type="file" id="file" name="files[]" /><ul></ul>
+    		<button id = "upload1" type="button">Upload</button>
+
+    		<ul></ul>
+<p> </p>
+
+<tr>
+    <td><label><h2>Search photo here:<h2></label></td>
+</tr>
+<tr>
+    <td colspan="2"><input class="textBox" id="query" type="text" maxlength="30"    required/></td>
+    <input id = "search1" type="button" class="loginButtons" value="Submit" onclick="getApi()">
+<ul></ul>
+</tr>
+
+<script type="text/javascript">
+function getApi(){
+  console.log('Get start');
+  var text_info = document.getElementById('query').value;
+  console.log(typeof(text_info))
+  var url_test = `https:/xxxxxxxxx/search?q=${text_info}`;
+  var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": `https://xxxxxxx/search?q=${text_info}`,
+                "method": "GET",
+                "headers": {
+                    "Content-Type": "application/json",
+                    "x-api-key": "xxxxxxxxxxx"
+                }
+            }
+  console.log(url_test)
+            $.ajax(settings).done(function (response) {
+                console.log('running!')
+                console.log(response);
+                   results = response['hits']//body.results;
+				   console.log("results:", results, 'results.length', results['total'])
+				source = 'https://s3.amazonaws.com/xxxxxxxx/'
+               for (var i = 0; i <  parseInt(results['total']); i++) {
+                 var oImg = document.createElement("img");
+				 //console.log("results[i]", results['hits'][i])
+				 tmpurl = source + results['hits'][i]._id
+				 //console.log("tmpurl", tmpurl)
+                 //oImg.setAttribute('src', `${results[i].url}`);
+				 oImg.setAttribute('src', tmpurl);
+                 oImg.setAttribute("height", "250px");
+                 oImg.setAttribute("width", "250px");
+                 //console.log(oImg);
+                 document.body.appendChild(oImg)
+             }
+            });
+          };
+</script>
+<tr>
+    <td colspan="2"><input class="textBox" id="query" type="text" maxlength="30"    required/></td>
+    <input id = "search1" type="button" class="loginButtons" value="Download" onclick="getApi()">
+<ul></ul>
+</body>
+<!--This is the function for uploading image  -->
+<script>
+$(document).ready(function(){
+      $("#upload1").click(function(){
+        var f = document.querySelector('input[type=file]').files[0];
+          if (f){
+            //console.log(f.name);
+            //console.log(f.type);
+            console.log(f);
+            //console.log(f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a');
+            if (!f.type.match('image.*')) {
+              alert("File Type Error");
+              return false;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("PUT", `https://xxxxxxx/upload/?item=${f.name}`);
+            xhr.setRequestHeader("Content-Type", f.type);
+			console.log("f.name:", f.name)
+            console.log("upload succeed!")
+			
+            xhr.setRequestHeader("x-api-key", "xxxxxxxxxxx");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+			xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+			xhr.setRequestHeader("Access-Control-Allow-Methods", "*");
+			xhr.setRequestHeader("Access-Control-Allow-Credentials", true);
+			console.log("f to send:", f)
+			xhr.send(f);
+          }
+          else{
+            alert("No file chosen!");
+          }
+        });
+      });
+    </script>
+
+</html>
